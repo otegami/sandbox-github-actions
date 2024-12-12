@@ -4,6 +4,7 @@ on:
   pull_request:
 jobs:
   sleep:
+    name: sleeper
     runs-on: ubuntu-latest
     strategy:
       matrix:
