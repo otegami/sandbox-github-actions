@@ -19,3 +19,11 @@ jobs:
       - name: Job Completed
         run: |
           echo "Completed sleep for ${{ matrix.sleep-duration }} seconds"
+  build:
+    name: release
+    needs: sleep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print wait message
+        run: |
+          echo "successfully wait for sleeping jobs"
