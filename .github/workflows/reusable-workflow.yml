@@ -5,14 +5,47 @@ on:
       workflow_id:
         required: true
         type: string
+    secrets:
+      token:
+        required: true
 jobs:
-  test:
-    name: called-workflow
+  uploader:
     runs-on: ubuntu-latest
     steps:
-      - name: Sleep
+      - name: List and download artifacts
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const run_id = parseInt("${{ inputs.workflow_id }}", 10);
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run_id
+            });
+            if (artifacts.artifacts.length === 0) {
+              throw new Error("No artifacts found in the parent workflow run.");
+            }
+            const fs = require('fs');
+            for (const artifact of artifacts.artifacts) {
+              console.log(`Downloading artifact: ${artifact.name}`);
+              const download = await github.rest.actions.downloadArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+                archive_format: 'zip',
+              });
+              fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/${artifact.name}.zip`, Buffer.from(download.data));
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
+      - name: Unzip artifacts
         run: |
-          sleep 10
-      - name: Print workflow_id
-        run: |
-          echo "workflow_id: ${{ inputs.workflow_id }}"
+          # unzipで全てのzipファイルを展開
+          for f in *.zip; do
+            unzip -o "$f"
+          done
+      - name: Upload all files as a single artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-files
+          path: ./*.txt

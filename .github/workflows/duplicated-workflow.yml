@@ -3,24 +3,28 @@ on:
   push:
   pull_request:
 jobs:
-  sleep:
-    name: duplicated-sleeper
+  generator:
+    name: generator
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sleep-duration: [10, 20, 30]
+        file_name:
+          - first
+          - second
+          - third
     steps:
-      - name: Print Job Info
+      - name: Create a sample file
         run: |
-          echo "Job with sleep duration: ${{ matrix.sleep-duration }} seconds"
-      - name: Sleep
-        run: |
-          sleep ${{ matrix.sleep-duration }}
-      - name: Job Completed
-        run: |
-          echo "Completed sleep for ${{ matrix.sleep-duration }} seconds"
-  call-workflow-passing-data:
-    needs: sleep
+          echo "${{ matrix.file_name }}" > "${{ matrix.file_name }}.txt"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.file_name }}
+          path: "${{ matrix.file_name }}.txt"
+  deploy:
+    needs: generator
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       workflow_id: ${{ github.run_id }}
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
