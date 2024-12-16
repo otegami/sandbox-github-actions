@@ -20,6 +20,7 @@ jobs:
         run: |
           echo "Completed sleep for ${{ matrix.sleep-duration }} seconds"
   call-workflow-passing-data:
-    uses: ./.github/workflows/reusable-workflow.yml@main
+    needs: sleep
+    uses: ./.github/workflows/reusable-workflow.yml
     with:
       workflow_id: ${{ github.run_id }}
