@@ -10,6 +10,9 @@ jobs:
     name: called-workflow
     runs-on: ubuntu-latest
     steps:
+      - name: Sleep
+        run: |
+          sleep 10
       - name: Print workflow_id
         run: |
           echo "workflow_id: ${{ inputs.workflow_id }}"
