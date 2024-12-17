@@ -12,6 +12,15 @@ jobs:
   uploader:
     runs-on: ubuntu-latest
     steps:
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: GITHUB_REF_NAME
+          release_name: GITHUB_REF_NAME
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
       - name: List and download artifacts
         uses: actions/github-script@v6
         with:
@@ -47,8 +56,8 @@ jobs:
       - name: Create GitHub Release
         uses: actions/create-release@v1
         with:
-          tag_name: "release-${{ github.run_id }}"
-          release_name: "Automated Release #${{ github.run_id }}"
+          tag_name: GITHUB_REF_NAME
+          release_name: GITHUB_REF_NAME
           draft: false
           prerelease: false
         env:
