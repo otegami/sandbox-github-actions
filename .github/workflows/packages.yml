@@ -1,4 +1,4 @@
-name: Duplicated Test Workflow
+name: Packages
 on:
   push:
   pull_request:
@@ -21,9 +21,11 @@ jobs:
         with:
           name: ${{ matrix.file_name }}
           path: "${{ matrix.file_name }}.txt"
-  deploy:
+  release:
+    if: |
+      github.ref_type == 'tag'
     needs: generator
-    uses: ./.github/workflows/reusable-workflow.yml
+    uses: ./.github/workflows/release.yml
     with:
       workflow_id: ${{ github.run_id }}
     secrets:
