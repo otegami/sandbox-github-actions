@@ -27,12 +27,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.token }}
       - uses: actions/download-artifact@v4
-      - name: Unzip Artifacts
-        run: |
-          mkdir -p extracted
-          for f in *.zip; do
-            unzip -o "$f" -d "./extracted/${f%.*}"
-          done
+        with:
+          path: ./extracted
       - name: Upload Individual Files to Release
         run: |
           find ./extracted -type f | while read -r file; do
