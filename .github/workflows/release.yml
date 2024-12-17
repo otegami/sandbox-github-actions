@@ -38,14 +38,27 @@ jobs:
             }
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
-      - name: Unzip artifacts
+      - name: Unzip Artifacts
         run: |
-          # unzipで全てのzipファイルを展開
+          mkdir -p extracted
           for f in *.zip; do
-            unzip -o "$f"
+            unzip -o "$f" -d "./extracted/${f%.*}"
           done
-      - name: Upload all files as a single artifact
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         with:
-          name: all-files
-          path: ./*.txt
+          tag_name: "release-${{ github.run_id }}"
+          release_name: "Automated Release #${{ github.run_id }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
+      - name: Upload Individual Files to Release
+        run: |
+          echo "${{ secrets.token }}" | gh auth login --with-token
+          find ./extracted -type f | while read -r file; do
+            echo "Uploading $file to release..."
+            gh release upload "${GITHUB_REF_NAME}" "$file" --clobber
+          done
+        env:
+          GH_TOKEN: ${{ secrets.token }}
