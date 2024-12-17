@@ -18,36 +18,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create GitHub Release
         run: |
-           gh release create "${{ inputs.tag }}" \
-            --title "release-${{ inputs.tag }}"
+          if gh release view "${{ inputs.tag }}" > /dev/null 2>&1; then
+            echo "Skipe the creation step  for Release ${inputs.tag}."
+          else
+            gh release create "${{ inputs.tag }}" \
+              --title "release-${{ inputs.tag }}"
+          fi
         env:
           GH_TOKEN: ${{ secrets.token }}
-      - name: List and download artifacts
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const run_id = parseInt("${{ inputs.workflow_id }}", 10);
-            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: run_id
-            });
-            if (artifacts.artifacts.length === 0) {
-              throw new Error("No artifacts found in the parent workflow run.");
-            }
-            const fs = require('fs');
-            for (const artifact of artifacts.artifacts) {
-              console.log(`Downloading artifact: ${artifact.name}`);
-              const download = await github.rest.actions.downloadArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                artifact_id: artifact.id,
-                archive_format: 'zip',
-              });
-              fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/${artifact.name}.zip`, Buffer.from(download.data));
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.token }}
+      - uses: actions/download-artifact@v4
       - name: Unzip Artifacts
         run: |
           mkdir -p extracted
