@@ -5,6 +5,9 @@ on:
       workflow_id:
         required: true
         type: string
+      tag:
+        required: true
+        type: string
     secrets:
       token:
         required: true
@@ -12,15 +15,13 @@ jobs:
   uploader:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: GITHUB_REF_NAME
-          release_name: GITHUB_REF_NAME
-          draft: false
-          prerelease: false
+        run: |
+           gh release create "${{ inputs.tag }}" \
+            --title "release-${{ inputs.tag }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.token }}
+          GH_TOKEN: ${{ secrets.token }}
       - name: List and download artifacts
         uses: actions/github-script@v6
         with:
@@ -53,18 +54,8 @@ jobs:
           for f in *.zip; do
             unzip -o "$f" -d "./extracted/${f%.*}"
           done
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: GITHUB_REF_NAME
-          release_name: GITHUB_REF_NAME
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.token }}
       - name: Upload Individual Files to Release
         run: |
-          echo "${{ secrets.token }}" | gh auth login --with-token
           find ./extracted -type f | while read -r file; do
             echo "Uploading $file to release..."
             gh release upload "${GITHUB_REF_NAME}" "$file" --clobber

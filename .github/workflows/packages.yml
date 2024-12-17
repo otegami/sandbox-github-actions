@@ -28,5 +28,6 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       workflow_id: ${{ github.run_id }}
+      tag: ${{ github.ref_name }}
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
