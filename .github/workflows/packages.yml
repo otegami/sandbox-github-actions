@@ -31,13 +31,13 @@ jobs:
           path: "${{ matrix.file_name }}.tar.gz"
       - name: Collect artifact names
         run: |
-          echo "${{ matrix.file_name }}.zip" >> "${{ matrix.file_name }}-artifacts.txt"
-          echo "${{ matrix.file_name }}.tar.gz" >> "${{ matrix.file_name }}-artifacts.txt"
+          echo "${{ matrix.file_name }}.zip" >> "${{ matrix.file_name }}.artifact"
+          echo "${{ matrix.file_name }}.tar.gz" >> "${{ matrix.file_name }}.artifact"
       - name: Upload artifact tar.gz
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ matrix.file_name }}-artifacts.txt"
-          path: "${{ matrix.file_name }}-artifacts.txt"
+          name: "${{ matrix.file_name }}.artifact"
+          path: "${{ matrix.file_name }}.artifact"
   release:
     if: |
       github.ref_type == 'tag'

@@ -28,8 +28,7 @@ jobs:
           merge-multiple: true
       - name: Upload Individual Files to Release
         run: |
-          cat ./artifacts/downloads/*-artifacts.txt > artifact_list.txt
-          artifact_list=$(sed 's/^/artifacts\/downloads\//' artifact_list.txt | paste -s -d' ' -)
-          gh release upload "${GITHUB_REF_NAME}" ${artifact_list}
+          cd artifacts/downloads
+          gh release upload "${GITHUB_REF_NAME}" $(cat *.artifact)
         env:
           GH_TOKEN: ${{ secrets.token }}
