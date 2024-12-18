@@ -13,14 +13,15 @@ jobs:
           - second
           - third
     steps:
-      - name: Create a sample file
+      - name: Create an asset
         run: |
           echo "${{ matrix.file_name }}" > "${{ matrix.file_name }}.txt"
+          zip "${{ matrix.file_name }}.zip" "${{ matrix.file_name }}.txt"
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ matrix.file_name }}.txt"
-          path: "${{ matrix.file_name }}.txt"
+          name: "${{ matrix.file_name }}.zip"
+          path: "${{ matrix.file_name }}.zip"
   release:
     if: |
       github.ref_type == 'tag'
