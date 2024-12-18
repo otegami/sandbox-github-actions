@@ -25,12 +25,13 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./artifacts/downloads
+      - name: List artifacts
+        run: ls -la ./artifacts/downloads/
       - name: Unzip Artifacts
         run: |
           mkdir -p ./artifacts/releases
-          ls -la ./artifacts/downloads/*.zip
-          for artifact in ./artifacts/downloads/*.zip; do
-            echo "$artifact"
+          for artifact in ./artifacts/downloads/*; do
+            echo "Unzipping $artifact"
             unzip "$artifact" -d "./artifacts/releases/"
           done
       - name: Upload Individual Files to Release
