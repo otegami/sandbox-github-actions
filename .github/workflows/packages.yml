@@ -17,11 +17,18 @@ jobs:
         run: |
           echo "${{ matrix.file_name }}" > "${{ matrix.file_name }}.txt"
           zip "${{ matrix.file_name }}.zip" "${{ matrix.file_name }}.txt"
-      - name: Upload artifact
+          mv "${{ matrix.file_name }}.txt" "${{ matrix.file_name }}.md"
+          tar czf ${{ matrix.file_name }}.tar.gz "${{ matrix.file_name }}.md"
+      - name: Upload artifact zip
         uses: actions/upload-artifact@v4
         with:
           name: "${{ matrix.file_name }}.zip"
           path: "${{ matrix.file_name }}.zip"
+      - name: Upload artifact tar.gz
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.file_name }}.tar.gz"
+          path: "${{ matrix.file_name }}.tar.gz"
   release:
     if: |
       github.ref_type == 'tag'

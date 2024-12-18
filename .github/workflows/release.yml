@@ -28,9 +28,15 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
       - uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          path: ./artifacts/downloads
+      - name: Unzip Artifacts
+        run: |
+          mkdir -p ./artifacts/releases
+          for artifact in ./artifacts/downloads/*; do
+            unzip "$artifact" -d "./artifacts/releases"
+          done
       - name: Upload Individual Files to Release
         run: |
-          gh release upload "${GITHUB_REF_NAME}" artifacts/*
+          gh release upload "${GITHUB_REF_NAME}" artifacts/releases/*
         env:
           GH_TOKEN: ${{ secrets.token }}
