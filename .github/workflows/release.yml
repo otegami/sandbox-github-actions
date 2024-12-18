@@ -28,12 +28,9 @@ jobs:
           GH_TOKEN: ${{ secrets.token }}
       - uses: actions/download-artifact@v4
         with:
-          path: ./extracted
+          path: ./artifacts
       - name: Upload Individual Files to Release
         run: |
-          find ./extracted -type f | while read -r file; do
-            echo "Uploading $file to release..."
-            gh release upload "${GITHUB_REF_NAME}" "$file" --clobber
-          done
+          gh release upload "${GITHUB_REF_NAME}" artifacts/*
         env:
           GH_TOKEN: ${{ secrets.token }}
