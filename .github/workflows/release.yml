@@ -30,6 +30,7 @@ jobs:
         run: |
           gh release upload "${GITHUB_REF_NAME}" \
             artifacts/downloads/first.* \
-            artifacts/downloads/third.*
+            artifacts/downloads/third.* \
+            artifacts/downloads/nothing
         env:
           GH_TOKEN: ${{ secrets.token }}
