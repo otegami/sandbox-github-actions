@@ -32,8 +32,10 @@ jobs:
       - name: Unzip Artifacts
         run: |
           mkdir -p ./artifacts/releases
-          for artifact in ./artifacts/downloads/*; do
-            unzip "$artifact" -d "./artifacts/releases"
+          ls -la ./artifacts/downloads/*.zip
+          for artifact in ./artifacts/downloads/*.zip; do
+            echo "$artifact"
+            unzip "$artifact" -d "./artifacts/releases/"
           done
       - name: Upload Individual Files to Release
         run: |
