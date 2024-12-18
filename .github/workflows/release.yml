@@ -26,6 +26,9 @@ jobs:
         with:
           path: ./artifacts/downloads
           merge-multiple: true
+          pattern: |
+            first.*
+            third.*
       - name: Upload Individual Files to Release
         run: |
           gh release upload "${GITHUB_REF_NAME}" artifacts/downloads/*
