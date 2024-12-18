@@ -27,15 +27,8 @@ jobs:
           path: ./artifacts/downloads
       - name: List artifacts
         run: ls -la ./artifacts/downloads/
-      - name: Unzip Artifacts
-        run: |
-          mkdir -p ./artifacts/releases
-          for artifact in ./artifacts/downloads/*; do
-            echo "Unzipping $artifact"
-            unzip "$artifact" -d "./artifacts/releases/"
-          done
       - name: Upload Individual Files to Release
         run: |
-          gh release upload "${GITHUB_REF_NAME}" artifacts/releases/*
+          gh release upload "${GITHUB_REF_NAME}" artifacts/downloads/*
         env:
           GH_TOKEN: ${{ secrets.token }}
