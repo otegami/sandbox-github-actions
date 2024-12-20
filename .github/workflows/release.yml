@@ -25,10 +25,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: ./artifacts/downloads
+          pattern: release-*
           merge-multiple: true
       - name: Upload Individual Files to Release
         run: |
-          cd artifacts/downloads
-          gh release upload "${GITHUB_REF_NAME}" $(cat *.artifact)
+          gh release upload "${GITHUB_REF_NAME}" artifacts/downloads/*
         env:
           GH_TOKEN: ${{ secrets.token }}
